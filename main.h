@@ -34,5 +34,7 @@ int print_reverse(va_list kinds, char buff[],
 int print_rot13string(va_list kinds, char buff[],
         int flags, int width, int precision, int size);
 
+ int get_precision(const char *format, int *x, va_list list);
+ int get_size(const char *format, int *p);
 
 #endif
