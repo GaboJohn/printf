@@ -55,7 +55,7 @@ int print_string(va_list types, char buffer[],
 	{
 		if (flags & F_MINUS)
 		{
-			write(1, &str[0], length);
+			write(1, &ptr[0], length);
 			for (x = width - length; x > 0; x--)
 				write(1, " ", 1);
 			return (width);
