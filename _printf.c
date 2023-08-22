@@ -1,61 +1,65 @@
 #include "main.h"
 
-void print_buffer(char buffer[], int *buf_in);
+void print_buffer(char buffer[], int *buff_ind);
+
 /**
- * _printf - Produce output according to format
- * @format:character string
- * Return: number of character printed
+ * _printf - Printing function
+ * @format: char string
+ * Return: Printed character.
  */
 int _printf(const char *format, ...)
 {
-	int size, buf_in, width, precision, flag = 0;
-	int x, count, str_count = 0;
+	int g, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
+	va_list list;
+	char buffer[BUFF_SIZE];
 
-	va_list holder;
-	char buffer[_SIZE];
-
-	if (format[0] == '%' && format[1] == '\0')
+	if (format == NULL)
 		return (-1);
 
-	va_start(hold, format);
+	va_start(list, format);
 
-	for (x = 0; format[x] != '\0'; x++)
+	for (g = 0; format && format[g] != '\0'; g++)
 	{
-		if (format[x] != '%')
+		if (format[g] != '%')
 		{
-			buffer[buf_in++] = format[x];
-			if (buf_in == _SIZE)
-				print_buffer(buffer, &buf_in);
-			str_count++;
+			buffer[buff_ind++] = format[g];
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			printed_chars++;
 		}
 		else
 		{
-			print_buffer(buffer, &buf_in);
-			size = set_size(format, &x);
-			precision = set_prec(format, &x, hold);
-			width = set_width(format, &x, hold);
-			flag = set_flags(format, &x);
-			++x;
-	count = handle_print(format, % x, hold, buffer, flag, width, precision, size);
-			if (count == -1)
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &g);
+			width = get_width(format, &g, list);
+			precision = get_precision(format, &g, list);
+			size = get_size(format, &g);
+			++g;
+			printed = handle_print(format, &g, list, buffer,
+				flags, width, precision, size);
+			if (printed == -1)
 				return (-1);
-			str_count += count;
+			printed_chars += printed;
 		}
-		}
-	print_buffer(buffer & buf_in);
+	}
 
-	va_end(holder);
-	return (str_count);
+	print_buffer(buffer, &buff_ind);
+
+	va_end(list);
+
+	return (printed_chars);
 }
-/**
- * print_buffer - print existing buff
- * @buffer: chars
- * @buf_in: index representing length
- */
-void print_buffer(char buffer[], int *buf_in)
-{
-	if (*buf_in > 0)
 
-		write(1, &buffer[0], *buf_in);
-	*buf_in = 0;
+/**
+ * print_buffer - Print buffer if it exist
+ * @buffer: chars
+ * @buff_ind: Index
+ */
+void print_buffer(char buffer[], int *buff_ind)
+{
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
+
+	*buff_ind = 0;
 }

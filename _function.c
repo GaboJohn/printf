@@ -1,39 +1,40 @@
 #include "main.h"
+
 /**
- * print_char - Print character
- * @kinds: args
- * @buff: handles print
- * @flag: counts flags
- * @width: Width
+ * print_char - Print char
+ * @types: args
+ * @buffer: handles print
+ * @flags: counts flags
+ * @width: obtains width
  * @precision: Prec specification
  * @size: specifier
- * Return: chars printed
+ * Return: printed chars
  */
-int print_char(va_list kinds, char buff[],
-	int flag, int width, int precision, int size)
+int print_char(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
-	char s = va_arg(kinds, int);
+	char c = va_arg(types, int);
 
-	return (handle_write_char(s, buff, flag, width, precision, size));
+	return (handle_write_char(c, buffer, flags, width, precision, size));
 }
 /**
  * print_string - Print string
- * @kinds: args
- * @buff: handles print
- * @flag:  Counts flags
- * @width: width.
+ * @types: args
+ * @buffer: handles print
+ * @flags:  Counts active flags
+ * @width: obtains width.
  * @precision: Prec specification
  * @size: specifier
- * Return: chars printed
+ * Return: printed chars
  */
-int print_string(va_list kinds, char buff[],
-	int flag, int width, int precision, int size)
+int print_string(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
 	int length = 0, x;
-	char *ptr = va_arg(kinds, char *);
+	char *ptr = va_arg(types, char *);
 
-	UNUSED(buff);
-	UNUSED(flag);
+	UNUSED(buffer);
+	UNUSED(flags);
 	UNUSED(width);
 	UNUSED(precision);
 	UNUSED(size);
@@ -52,16 +53,16 @@ int print_string(va_list kinds, char buff[],
 
 	if (width > length)
 	{
-		if (flag & F_MINUS)
+		if (flags & F_MINUS)
 		{
-			write(1, &ptr[0], length);
-			for (i = width - length; x > 0; x--)
+			write(1, &str[0], length);
+			for (x = width - length; x > 0; x--)
 				write(1, " ", 1);
 			return (width);
 		}
 		else
 		{
-			for (x = width - length; i > 0; x--)
+			for (x = width - length; x > 0; x--)
 				write(1, " ", 1);
 			write(1, &ptr[0], length);
 			return (width);
@@ -71,108 +72,107 @@ int print_string(va_list kinds, char buff[],
 	return (write(1, ptr, length));
 }
 /**
- * print_percent - Print percentage sign
- * @kinds: args
- * @buff: handles print
- * @flag: count flags
- * @width:  width.
+ * print_percent - Prints percentage sign
+ * @types: args
+ * @buffer: handles print
+ * @flags:  counts flags
+ * @width: obtains width.
  * @precision: Prec specification
  * @size: specifier
- * Return: chars printed
+ * Return: printed chars
  */
-int print_percent(va_list kinds, char buff[],
-	int flag, int width, int precision, int size)
+int print_percent(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
-	UNUSED(kinds);
-	UNUSED(buff);
-	UNUSED(flag);
+	UNUSED(types);
+	UNUSED(buffer);
+	UNUSED(flags);
 	UNUSED(width);
 	UNUSED(precision);
 	UNUSED(size);
 	return (write(1, "%%", 1));
 }
 /**
- * print_int - Print int
- * @kinds: args
- * @buff: handles print
- * @flag: counts flags
- * @width: width.
+ * print_int - Print integer
+ * @types: args
+ * @buffer: handles print
+ * @flags: counts flags
+ * @width: obtains width.
  * @precision: Prec specification
  * @size: specifier
- * Return: chars printed
+ * Return: printed chars
  */
-int print_int(va_list kinds, char buff[],
-	int flag, int width, int precision, int size)
+int print_int(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
 	int x = BUFF_SIZE - 2;
 	int is_negative = 0;
-	long int y = va_arg(kinds, long int);
-	unsigned long int nmb;
+	long int q = va_arg(types, long int);
+	unsigned long int num;
 
-	y = convert_size_number(y, size);
+	q = convert_size_number(q, size);
 
-	if (y == 0)
-		buff[x--] = '0';
+	if (q == 0)
+		buffer[x--] = '0';
 
-	buff[BUFF_SIZE - 1] = '\0';
-	nmb = (unsigned long int)y;
+	buffer[BUFF_SIZE - 1] = '\0';
+	num = (unsigned long int)q;
 
-	if (y < 0)
+	if (q < 0)
 	{
-		nmb = (unsigned long int)((-1) * y);
+		num = (unsigned long int)((-1) * q);
 		is_negative = 1;
 	}
 
-	while (nmb > 0)
+	while (num > 0)
 	{
-		buff[x--] = (nmb % 10) + '0';
-		nmb /= 10;
+		buffer[x--] = (num % 10) + '0';
+		num /= 10;
 	}
 
 	x++;
 
-	return (write_number(is_negative, x, buff, flag, width, precision, size));
+	return (write_number(is_negative, x, buffer, flags, width, precision, size));
 }
-
 /**
- * print_binary - Print unsigned numb
- * @kinds: args
- * @buff: handles print
- * @flag: counts flags
- * @width: width.
+ * print_binary - Print num
+ * @types: args
+ * @buffer: handles print
+ * @flags: counts flags
+ * @width: obtains width.
  * @precision: Prec specification
  * @size: specifier
- * Return: chars printed.
+ * Return: printed chars
  */
-int print_binary(va_list kinds, char buff[],
-	int flag, int width, int precision, int size)
+int print_binary(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
-	unsigned int x, y, z, sum;
-	unsigned int n[32];
+	unsigned int q, r, t, sum;
+	unsigned int s[32];
 	int count;
 
-	UNUSED(buff);
-	UNUSED(flag);
+	UNUSED(buffer);
+	UNUSED(flags);
 	UNUSED(width);
 	UNUSED(precision);
 	UNUSED(size);
 
-	x = va_arg(kinds, unsigned int);
-	y = 2147483648; /* (2 ^ 31) */
-	n[0] = x / y;
-	for (z = 1; z < 32; z++)
+	q = va_arg(types, unsigned int);
+	r = 2147483648; /* (2 ^ 31) */
+	s[0] = q / r;
+	for (t = 1; t < 32; t++)
 	{
-		y /= 2;
-		n[z] = (x / y) % 2;
+		q /= 2;
+		s[t] = (q / r) % 2;
 	}
-	for (z = 0, sum = 0, count = 0; z < 32; z++)
+	for (t = 0, sum = 0, count = 0; t < 32; t++)
 	{
-		sum += n[z];
-		if (sum || z == 31)
+		sum += s[t];
+		if (sum || t == 31)
 		{
-			char c = '0' + n[z];
+			char z = '0' + s[t];
 
-			write(1, &c, 1);
+			write(1, &z, 1);
 			count++;
 		}
 	}
